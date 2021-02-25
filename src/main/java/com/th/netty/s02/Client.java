@@ -52,14 +52,16 @@ public class Client {
         channel.writeAndFlush(buf);
     }
 
+    public void closeConnect() {
+        this.send("_bye_");
+    }
 }
-
 
 class ClientChannelInitializer extends ChannelInitializer<SocketChannel> {
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
         System.out.println(ch);
-        ch.pipeline().addLast(new ClientHandler());
+        ch.pipeline().addLast(new ClientHandler());//pipeline是channel上的责任链一个一个链条
     }
 }
 

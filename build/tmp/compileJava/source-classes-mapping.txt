@@ -7,10 +7,6 @@ com/th/netty/s01/Server.java
  com.th.netty.s01.Server
  com.th.netty.s01.Server$1
  com.th.netty.s01.ServerChildHandler
-com/th/netty/s02/Server.java
- com.th.netty.s02.Server
- com.th.netty.s02.Server$1
- com.th.netty.s02.ServerChildHandler
 com/th/netty/s02/Client.java
  com.th.netty.s02.Client
  com.th.netty.s02.Client$1
@@ -20,3 +16,10 @@ com/th/netty/s02/ClientFrame.java
  com.th.netty.s02.ClientFrame
  com.th.netty.s02.ClientFrame$1
  com.th.netty.s02.ClientFrame$2
+com/th/netty/s02/Server.java
+ com.th.netty.s02.Server
+ com.th.netty.s02.Server$1
+ com.th.netty.s02.ServerChildHandler
+com/th/netty/s02/ServerFrame.java
+ com.th.netty.s02.ServerFrame
+ com.th.netty.s02.ServerFrame$1

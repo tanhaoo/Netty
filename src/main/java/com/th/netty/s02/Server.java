@@ -18,7 +18,7 @@ public class Server {
 
     public static ChannelGroup clients = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
-    public static void main(String[] args) throws Exception {
+    public void serverStart() {
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup(2);//2个线程
         try {
@@ -36,15 +36,16 @@ public class Server {
                     .bind(8888)
                     .sync();//这个同步是看bind有没有成功，成功了才往下执行
             System.out.println("server started!");
+            ServerFrame.INSTANCE.updateServerMsg("server started!");
             f.channel().closeFuture().sync();//close()->ChannelFuture  如果没有调close(),sync就会使他一直在这等着
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
         }
     }
-
 }
-
 
 class ServerChildHandler extends ChannelInboundHandlerAdapter {
 
@@ -61,8 +62,15 @@ class ServerChildHandler extends ChannelInboundHandlerAdapter {
             buf = (ByteBuf) msg;
             byte[] bytes = new byte[buf.readableBytes()];
             buf.getBytes(buf.readerIndex(), bytes);
-            System.out.println(new String(bytes));
-            Server.clients.writeAndFlush(msg);
+            String s = new String(bytes);
+            if (s.equals("_bye_")) {
+                ServerFrame.INSTANCE.updateServerMsg(ctx.channel() + "客户端退出");
+                Server.clients.remove(ctx.channel());
+                ctx.close();
+            } else {
+                ServerFrame.INSTANCE.updateClientMsg(s);
+                Server.clients.writeAndFlush(msg);
+            }
         } finally {
             //if (buf != null) ReferenceCountUtil.release(buf); 与writeAndFlush冲突
             // System.out.println(buf.refCnt());//知道有多少人引用了他
@@ -72,6 +80,7 @@ class ServerChildHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         cause.printStackTrace();
+        Server.clients.remove(ctx.channel());
         ctx.close();
         //当close后client端的 f.channel().closeFuture().sync();就会执行
     }

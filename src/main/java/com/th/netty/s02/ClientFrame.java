@@ -34,6 +34,7 @@ public class ClientFrame extends Frame {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
+                c.closeConnect();
                 System.exit(0);
             }
         });
@@ -50,10 +51,7 @@ public class ClientFrame extends Frame {
     }
 
     public void update(String msg) {
-        if (ta.getText().equals(""))
-            ta.setText(msg + "\n");
-        else
-            ta.setText(ta.getText() + msg + "\n");
+        ta.setText(ta.getText() + msg + "\n");
     }
 
 }
